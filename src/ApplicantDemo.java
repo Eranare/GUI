@@ -12,13 +12,19 @@ public class ApplicantDemo extends JFrame{
     private JFormattedTextField hourField;
     private JFormattedTextField minuteField;
     private JButton btn;
-public ApplicantDemo() {
+    private JTextPane displayMessage;
+    private JTextPane displayApplicantsField;
+
+    public ApplicantDemo() {
     btn.addActionListener(new ActionListener() {
         @Override
         public void actionPerformed(ActionEvent e) {
-            //Submit data
+            //Check input
+
             //Show message if failed (wrong input, other errors)
-            //Else show message of success
+
+            //Else Submit data to json?
+            // show message of success
         }
     });
 }
@@ -27,9 +33,10 @@ public ApplicantDemo() {
     ApplicantDemo h=new ApplicantDemo();
     h.setContentPane(h.panelMain);
     h.setTitle("ApplicantGUI");
-    h.setBounds(600,200 , 400, 600);
+    h.setBounds(800,800 , 500, 800);
     //h.setSize(400, 600);
     h.setVisible(true);
     h.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     }
 }
+
