@@ -29,8 +29,9 @@ public class ApplicantDemo extends JFrame {
     private JButton btn;
     private JTextPane displayMessage;
     private JTextPane displayApplicantsField;
+    private JSpinner spinner1;
 
-
+    private static final String DEFAULT_MESSAGE = "Please insert name and time";
 
     //--ChatGPT solution for limiting the input fields, took me several hours on my own untill i asked him and even that took another 3 hours to get it working
     // Define a DocumentFilter to only allow alphabets
@@ -112,21 +113,34 @@ public class ApplicantDemo extends JFrame {
                 //compare name as string
                 if (!name.matches("[a-zA-Z]+")) {
                     //Error popup and break;
-                    JOptionPane.showMessageDialog(btn, "Invalid name ");
+                    displayMessage("Invalid name");
                     //if string != contains a name return;
                     return;
                 } else if (!hour.matches("\\d+")) {
                     //Error popup
-                    JOptionPane.showMessageDialog(btn, "invalid hours ");
+                    displayMessage("Invalid hours");
                     //if string != contains just numbers return;
                     return;
                 } else if (!min.matches("\\d+")) {
-                    JOptionPane.showMessageDialog(btn, "invalid minutes ");
+                    displayMessage("Invalid minutes");
                     //if string != contains just 2 numbers return;
                     return;
                 } else {
-                    JOptionPane.showMessageDialog(btn, "HELLO " + nameField.getText());
+                    displayMessage("Saving Data");
+
                     writeFile(nameField.getText(), hourField.getText(), minuteField.getText());
+                        //Added a wait time for shits and giggles, to make the app appear to be busy
+
+                    try {
+                        Thread.sleep(2000); // Sleep for 4 seconds
+                    } catch (InterruptedException ex) {
+                        Thread.currentThread().interrupt();
+                    }
+                    displayMessage("Data saved!");
+                        nameField.setText("");
+                        hourField.setText("");
+                        minuteField.setText("");
+
                     loadApplicantsFromFile();
                 }
 
@@ -134,6 +148,21 @@ public class ApplicantDemo extends JFrame {
             // show message
 
         });
+        displayMessage.setText(DEFAULT_MESSAGE);
+    }
+    private void displayMessage(String message) {
+        // Set the text of the top text pane to the message
+        displayMessage.setText(message);
+
+        // Clear the text after a certain amount of time
+        Timer timer = new Timer(5000, new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent arg0) {
+                displayMessage.setText("");
+            }
+        });
+        timer.setRepeats(false);
+        timer.start();
     }
 
     public static void writeFile(String name, String hour, String minute) {
@@ -168,7 +197,7 @@ public class ApplicantDemo extends JFrame {
                 return;
             }
 
-            JOptionPane.showMessageDialog(null, "Data saved successfully!");
+           // JOptionPane.showMessageDialog(null, "Data saved successfully!");
         } catch (NumberFormatException | JSONException e) {
             e.printStackTrace();
             JOptionPane.showMessageDialog(null, "Error: Invalid input format.");
