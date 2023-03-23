@@ -8,10 +8,8 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.NumberFormat;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.json.JSONStringer;
+import org.json.*;
+
 import java.nio.charset.StandardCharsets;
 import static java.nio.file.Files.*;
 
@@ -31,6 +29,8 @@ public class ApplicantDemo extends JFrame {
     private JButton btn;
     private JTextPane displayMessage;
     private JTextPane displayApplicantsField;
+
+
 
     //--ChatGPT solution for limiting the input fields, took me several hours on my own untill i asked him and even that took another 3 hours to get it working
     // Define a DocumentFilter to only allow alphabets
@@ -65,7 +65,10 @@ public class ApplicantDemo extends JFrame {
 
 
     public ApplicantDemo() {
+
         super("Applicant Demo");
+
+        loadApplicantsFromFile();
 //---------Also Chats solution
 // Add the DocumentFilter to the hourField and minuteField
         ((AbstractDocument) hourField.getDocument()).setDocumentFilter(new NumericFilter());
@@ -145,26 +148,33 @@ public class ApplicantDemo extends JFrame {
             values.put("name ", name);
             values.put("time ", time);
 
-            File file = new File("Data.JSON");
-            boolean fileExists = file.exists();
+            // Read existing JSON data from file
+            JSONArray jsonArray;
+            try (FileReader fileReader = new FileReader("data.json")) {
+                jsonArray = new JSONArray(new JSONTokener(fileReader));
+            } catch (IOException e) {
+                jsonArray = new JSONArray();
+            }
 
-            try (FileWriter data = new FileWriter(file, true)) {
-                if (fileExists) {
-                    data.write(",\n");
-                }
-                data.write(values.toString(4));
-                data.flush();
+            // Add new object to JSON array
+            jsonArray.put(values);
 
-                JOptionPane.showMessageDialog(null, "Data saved successfully!");
+            // Write updated JSON data back to file
+            try (FileWriter fileWriter = new FileWriter("data.json")) {
+                fileWriter.write(jsonArray.toString());
             } catch (IOException e) {
                 e.printStackTrace();
                 JOptionPane.showMessageDialog(null, "Error saving data.");
+                return;
             }
+
+            JOptionPane.showMessageDialog(null, "Data saved successfully!");
         } catch (NumberFormatException | JSONException e) {
             e.printStackTrace();
             JOptionPane.showMessageDialog(null, "Error: Invalid input format.");
         }
     }
+
 
     public static void main(String[] args) {
         ApplicantDemo h = new ApplicantDemo();
@@ -174,7 +184,6 @@ public class ApplicantDemo extends JFrame {
         //h.setSize(400, 600);
         h.setVisible(true);
         checkIfFile();
-
         h.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     }
 
@@ -185,20 +194,25 @@ public class ApplicantDemo extends JFrame {
             // Create a JSONArray from the string
             JSONArray jsonArray = new JSONArray(jsonStr);
 
-            // Create a new JSONObject with pretty-printing enabled
-            JSONObject jsonObject = new JSONObject();
-            jsonObject.put("applicants", jsonArray);
+            StringBuilder formattedData = new StringBuilder();
+            for (int i = 0; i < jsonArray.length(); i++) {
+                JSONObject applicantObj = jsonArray.getJSONObject(i);
+                String name = applicantObj.getString("name ");
+                String time = applicantObj.getString("time ");
 
-            String prettyJsonStr = jsonObject.toString(4); // The number 4 is the indentation level
+                // Format the data and append it to the output string
+                formattedData.append("Applicant name: ").append(name).append(", timeslot: ").append(time).append("\n");
+            }
 
-            // Display the pretty-printed JSON in the JTextPane
-            displayApplicantsField.setText(prettyJsonStr);
+            // Display the formatted data in the JTextPane
+            displayApplicantsField.setText(formattedData.toString());
 
         } catch (IOException | JSONException e) {
             e.printStackTrace();
-
         }
     }
+
+
     public static void checkIfFile() {
         if (exists(Path.of("Data.JSON"))) {
             System.out.println("Data.JSON exists");

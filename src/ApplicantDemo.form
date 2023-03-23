@@ -74,7 +74,9 @@
         <constraints>
           <grid row="2" column="2" row-span="1" col-span="3" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
         </constraints>
-        <properties/>
+        <properties>
+          <background color="-11051395"/>
+        </properties>
         <border type="none"/>
         <children>
           <component id="5bff1" class="javax.swing.JTextPane" binding="displayMessage">
@@ -85,26 +87,40 @@
               </grid>
             </constraints>
             <properties>
-              <background color="-5319975"/>
+              <autoscrolls value="true"/>
+              <background color="-12168586"/>
               <editable value="false"/>
             </properties>
           </component>
-          <component id="2ca9" class="javax.swing.JTextPane" binding="displayApplicantsField">
+          <scrollpane id="f754b">
             <constraints>
-              <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="6" hsize-policy="6" anchor="0" fill="3" indent="0" use-parent-layout="false">
-                <minimum-size width="-1" height="50"/>
-                <preferred-size width="150" height="50"/>
-              </grid>
+              <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="7" hsize-policy="7" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
-              <editable value="false"/>
+              <background color="-15400955"/>
             </properties>
-          </component>
+            <border type="none"/>
+            <children>
+              <component id="2ca9" class="javax.swing.JTextPane" binding="displayApplicantsField">
+                <constraints/>
+                <properties>
+                  <background color="-12168586"/>
+                  <editable value="false"/>
+                  <enabled value="false"/>
+                  <selectionColor color="-5292997"/>
+                </properties>
+              </component>
+            </children>
+          </scrollpane>
           <component id="9cac5" class="javax.swing.JButton" binding="btn">
             <constraints>
               <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
+              <borderPainted value="true"/>
+              <font swing-font="Button.font"/>
+              <margin top="0" left="0" bottom="5" right="0"/>
+              <opaque value="true"/>
               <text value="Add participant"/>
             </properties>
           </component>
