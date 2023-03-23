@@ -182,11 +182,12 @@ public class ApplicantDemo extends JFrame {
         Timer timer = new Timer(5000, new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent arg0) {
-                displayMessage.setText("");
+                displayMessage.setText(DEFAULT_MESSAGE);
             }
         });
         timer.setRepeats(false);
         timer.start();
+
     }
 
     public static void writeFile(String name, String hour, String minute) {
@@ -233,7 +234,7 @@ public class ApplicantDemo extends JFrame {
         ApplicantDemo h = new ApplicantDemo();
         h.setContentPane(h.panelMain);
         h.setTitle("ApplicantGUI");
-        h.setBounds(500, 200, 700, 800);
+        h.setBounds(500, 200, 700, 600);
         //h.setSize(400, 600);
         h.setVisible(true);
         checkIfFile();
