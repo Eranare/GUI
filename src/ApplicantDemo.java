@@ -1,6 +1,7 @@
 import javax.swing.*;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import javax.swing.text.*;
-import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
 import java.nio.file.Files;
@@ -29,9 +30,56 @@ public class ApplicantDemo extends JFrame {
     private JButton btn;
     private JTextPane displayMessage;
     private JTextPane displayApplicantsField;
-    private JSpinner spinner1;
+    private JSpinner minuteSpinner;
+    private JSpinner hourSpinner;
 
     private static final String DEFAULT_MESSAGE = "Please insert name and time";
+
+    private void createUIComponents() {
+        SpinnerNumberModel hourSpinnerModel = new SpinnerNumberModel(0, 0, 23, 1) {
+            @Override
+            public Object getNextValue() {
+                Object value = super.getNextValue();
+                if (value == null) {
+                    value = getMinimum();
+                }
+                return value;
+            }
+
+            @Override
+            public Object getPreviousValue() {
+                Object value = super.getPreviousValue();
+                if (value == null) {
+                    value = getMaximum();
+                }
+                return value;
+            }
+        };
+        hourSpinner = new JSpinner(hourSpinnerModel);
+
+        SpinnerNumberModel minuteSpinnerModel = new SpinnerNumberModel(0, 0, 59, 1) {
+            @Override
+            public Object getNextValue() {
+                Object value = super.getNextValue();
+                if (value == null) {
+                    value = getMinimum();
+                }
+                return value;
+            }
+
+            @Override
+            public Object getPreviousValue() {
+                Object value = super.getPreviousValue();
+                if (value == null) {
+                    value = getMaximum();
+                }
+                return value;
+            }
+        };
+        minuteSpinner = new JSpinner(minuteSpinnerModel);
+    }
+
+
 
     //--ChatGPT solution for limiting the input fields, took me several hours on my own untill i asked him and even that took another 3 hours to get it working
     // Define a DocumentFilter to only allow alphabets
@@ -72,29 +120,12 @@ public class ApplicantDemo extends JFrame {
         loadApplicantsFromFile();
 //---------Also Chats solution
 // Add the DocumentFilter to the hourField and minuteField
-        ((AbstractDocument) hourField.getDocument()).setDocumentFilter(new NumericFilter());
-        ((AbstractDocument) minuteField.getDocument()).setDocumentFilter(new NumericFilter());
 
         //Name field mask
 
         ((AbstractDocument) nameField.getDocument()).setDocumentFilter(new AlphabeticalFilter());
 
-        // Create the hour formatter
-        NumberFormat hourFormat = NumberFormat.getInstance();
-        NumberFormatter hourFormatter = new NumberFormatter(hourFormat);
-        hourFormatter.setValueClass(Integer.class);
-        hourFormatter.setMinimum(0);
-        hourFormatter.setMaximum(23);
-        // Set the hourField's formatter factory to use the hour formatter
-        hourField.setFormatterFactory(new DefaultFormatterFactory(hourFormatter));
-        // Create the minute field with a NumberFormatter
-        NumberFormat minuteFormat = NumberFormat.getInstance();
-        NumberFormatter minuteFormatter = new NumberFormatter(minuteFormat);
-        minuteFormatter.setValueClass(Integer.class);
-        minuteFormatter.setMinimum(0);
-        minuteFormatter.setMaximum(59);
-        // Set the minuteField's formatter factory to use the minute formatter
-        minuteField.setFormatterFactory(new DefaultFormatterFactory(minuteFormatter));
+
 
 //-------------End of chats solution
 
@@ -107,8 +138,10 @@ public class ApplicantDemo extends JFrame {
                 //Read input
                 String name = nameField.getText();
                 //System.out.print("is this empty?"+ nameField.getText());
-                String hour = hourField.getText();
-                String min =  minuteField.getText();
+                int hour = (int) hourSpinner.getValue();
+                int minute = (int) minuteSpinner.getValue();
+               // hourField.setText(Integer.toString(hour));
+               // minuteField.setText(Integer.toString(minute));
                 //System.out.print("Name: "+ name);
                 //compare name as string
                 if (!name.matches("[a-zA-Z]+")) {
@@ -116,19 +149,10 @@ public class ApplicantDemo extends JFrame {
                     displayMessage("Invalid name");
                     //if string != contains a name return;
                     return;
-                } else if (!hour.matches("\\d+")) {
-                    //Error popup
-                    displayMessage("Invalid hours");
-                    //if string != contains just numbers return;
-                    return;
-                } else if (!min.matches("\\d+")) {
-                    displayMessage("Invalid minutes");
-                    //if string != contains just 2 numbers return;
-                    return;
                 } else {
                     displayMessage("Saving Data");
 
-                    writeFile(nameField.getText(), hourField.getText(), minuteField.getText());
+                    writeFile(nameField.getText(), hourSpinner.getValue().toString(),  minuteSpinner.getValue().toString());
                         //Added a wait time for shits and giggles, to make the app appear to be busy
 
                     try {
@@ -138,8 +162,8 @@ public class ApplicantDemo extends JFrame {
                     }
                     displayMessage("Data saved!");
                         nameField.setText("");
-                        hourField.setText("");
-                        minuteField.setText("");
+                        hourSpinner.setValue(0);
+                        minuteSpinner.setValue(0);
 
                     loadApplicantsFromFile();
                 }
