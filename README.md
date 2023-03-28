@@ -23,3 +23,14 @@ ex:
 <APPLICANT NAME3> created at  : <H><M>
 
 Finally.. cosmetics
+
+
+
+#GUI 
+- Checks if data.JSON exists, if not make new data.JSON file.
+- Read and display existing applicant data from the data.JSON file in bottom Pane.
+- User inputs; Name(restricted to letters only, field will clear if non alphabetical symbols are placed and field is unfocused), TimeH and TimeM (Also limited to numbers only, will clear if letters or symbols are insterted) *<Time inputs changed from formatted text input to spinners.>
+- if invalid, top Pane will display the corresponding error.
+- onclick eventlistener Button sets off the methods to validate entries. 
+- writeFile verifies the input once more before reading the existing JSON file as an array, add recent input into array and save it as data.JSON again.
+- Refreshes the displayed list.
