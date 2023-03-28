@@ -7,6 +7,7 @@ import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.text.DateFormat;
 import java.text.NumberFormat;
 
 import org.json.*;
@@ -16,6 +17,9 @@ import static java.nio.file.Files.*;
 
 import java.io.FileWriter;
 import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 public class ApplicantDemo extends JFrame {
 
@@ -82,6 +86,7 @@ public class ApplicantDemo extends JFrame {
 
 
     //--ChatGPT solution for limiting the input fields, took me several hours on my own untill i asked him and even that took another 3 hours to get it working
+
     // Define a DocumentFilter to only allow alphabets
     private class AlphabeticalFilter extends DocumentFilter {
         public void insertString(FilterBypass fb, int offset, String string, AttributeSet attr) throws BadLocationException {
@@ -235,7 +240,6 @@ public class ApplicantDemo extends JFrame {
         h.setContentPane(h.panelMain);
         h.setTitle("ApplicantGUI");
         h.setBounds(500, 200, 700, 600);
-        //h.setSize(400, 600);
         h.setVisible(true);
         checkIfFile();
         h.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -252,20 +256,24 @@ public class ApplicantDemo extends JFrame {
             for (int i = 0; i < jsonArray.length(); i++) {
                 JSONObject applicantObj = jsonArray.getJSONObject(i);
                 String name = applicantObj.getString("name ");
-                String time = applicantObj.getString("time ");
+                String timeString = applicantObj.getString("time ");
 
-                // Format the data and append it to the output string
+                // Formatting time
+                DateFormat dateFormat = new SimpleDateFormat("HH:mm");
+                Date timeDate = dateFormat.parse(timeString);
+                String time = dateFormat.format(timeDate);
+
+                // Formatting
                 formattedData.append("Applicant name: ").append(name).append(", timeslot: ").append(time).append("\n");
             }
 
             // Display the formatted data in the JTextPane
             displayApplicantsField.setText(formattedData.toString());
 
-        } catch (IOException | JSONException e) {
+        } catch (IOException | JSONException | ParseException e) {
             e.printStackTrace();
         }
     }
-
 
     public static void checkIfFile() {
         if (exists(Path.of("Data.JSON"))) {
